@@ -9,19 +9,19 @@
     "lint": "bun lint:es && bun lint:style",
     "format": "prettier --write .",
     "lint:style": "stylelint 'src/**/styled.ts' 'src/**/*.tsx'",
-    "lint-staged": {
-      "*.{ts,tsx,js,jsx}": [
-        "eslint --cache"
-      ],
-      "styled.ts": [
-        "stylelint --cache"
-      ]
-    },
-    "husky": {
-      "hooks": {
-        "pre-commit": "bun lint-staged && bun check:type"
-      }
+    "prepare": "husky",
+    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "husky": "^9.1.6",
