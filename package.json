@@ -1,0 +1,59 @@
+{
+  "name": "nextjs-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "bun lint:es && bun lint:style",
+    "format": "prettier --write .",
+    "lint:style": "stylelint 'src/**/styled.ts' 'src/**/*.tsx'",
+    "prepare": "husky",
+    "cypress:open": "cypress open",
+    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx"
+  },
+  "lint-staged": {
+    "./**/*.{js,jsx,ts,tsx,css,d.ts}": [
+      "bun lint"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "bun precommit"
+    }
+  },
+  "dependencies": {
+    "@nextui-org/react": "^2.4.8",
+    "@t3-oss/env-nextjs": "^0.11.1",
+    "@tanstack/react-query": "^5.59.8",
+    "axios": "^1.7.7",
+    "framer-motion": "^11.11.7",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "next": "14.2.15",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hook-form": "^7.53.0",
+    "react-icons": "^5.3.0",
+    "react-toastify": "^10.0.6",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "cypress": "^13.15.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.15",
+    "postcss": "^8",
+    "stylelint": "^16.9.0",
+    "stylelint-a11y": "^1.2.3",
+    "stylelint-config-prettier": "^9.0.5",
+    "stylelint-config-standard": "^36.0.1",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.10.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
