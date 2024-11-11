@@ -3,6 +3,7 @@ import type {Metadata} from "next";
 import "./globals.css";
 import AppProviders from "@/app/providers";
 import Header from "@/layouts/header";
+import {cookies} from "next/headers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,10 +26,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initCookiesClient = cookies().get("sessionToken")?.value;
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AppProviders>
+        <AppProviders initCookiesClient={initCookiesClient}>
           <Header />
           {children}
         </AppProviders>

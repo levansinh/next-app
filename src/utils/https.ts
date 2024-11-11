@@ -1,35 +1,91 @@
-import axios, {AxiosInstance} from "axios";
+import camelcaseKeys from "camelcase-keys";
+import snakecaseKeys from "snakecase-keys";
 
-class Http {
-  instance: AxiosInstance;
+type CustomOptions = Omit<RequestInit, "method"> & {
+  baseUrl?: string | undefined;
+  body?: Record<string, any> | FormData;
+};
 
-  constructor() {
-    this.instance = axios.create({
-      baseURL: "",
-      timeout: 10000,
-      headers: {"Content-Type": "application/json"},
-    });
+export const isClient = () => typeof window !== "undefined";
 
-    this.instance.interceptors.request.use(
-      (config) => {
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      },
-    );
+class SessionClient {
+  private token = "";
 
-    this.instance.interceptors.response.use(
-      (config) => {
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      },
-    );
+  get value() {
+    return this.token;
+  }
+  set value(token: string) {
+    if (typeof window === "undefined") {
+      throw new Error("No phải client");
+    }
+    this.token = token;
   }
 }
 
-const http = new Http().instance;
+export const sessionToken = new SessionClient();
+
+const request = async <Response>(
+  method: "GET" | "POST" | "PUT" | "DELETE",
+  url: string,
+  options?: CustomOptions | undefined,
+) => {
+  let body: FormData | string | undefined = undefined;
+  if (options?.body instanceof FormData) {
+    body = options.body;
+  } else if (options?.body) {
+    body = JSON.stringify(snakecaseKeys(options.body));
+  }
+  const baseHeaders: {
+    [key: string]: string;
+  } =
+    body instanceof FormData
+      ? {}
+      : {
+          "Content-Type": "application/json",
+        };
+
+  if (isClient()) {
+    const sessionToken = "sinh";
+
+    if (sessionToken) {
+      baseHeaders.Authorization = `Token ${sessionToken}`;
+    }
+  }
+
+  const baseUrl =
+    options?.baseUrl === undefined ? process.env.NEXT_PUBLIC_APP_API_URL : options.baseUrl;
+
+  const fullUrl = url.startsWith("/") ? `${baseUrl}${url}` : `${baseUrl}/${url}`;
+
+  const res = await fetch(fullUrl, {
+    ...options,
+    headers: {
+      ...baseHeaders,
+      ...options?.headers,
+    } as any,
+    body,
+    method,
+  });
+  const data = await res.json();
+
+  return camelcaseKeys(data, {
+    deep: true,
+  });
+};
+
+const http = {
+  get<Response>(url: string, options?: Omit<CustomOptions, "body"> | undefined) {
+    return request<Response>("GET", url, options);
+  },
+  post<Response>(url: string, body: any, options?: Omit<CustomOptions, "body"> | undefined) {
+    return request<Response>("POST", url, {...options, body});
+  },
+  put<Response>(url: string, body: any, options?: Omit<CustomOptions, "body"> | undefined) {
+    return request<Response>("PUT", url, {...options, body});
+  },
+  delete<Response>(url: string, options?: Omit<CustomOptions, "body"> | undefined) {
+    return request<Response>("DELETE", url, {...options});
+  },
+};
 
 export default http;

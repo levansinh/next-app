@@ -1,3 +1,4 @@
+import LogoutButton from "@/layouts/components/logout-button";
 import Link from "next/link";
 
 function Header() {
@@ -13,6 +14,7 @@ function Header() {
       <div className="flex items-center gap-4">
         <Link href="/login">Login</Link>
         <Link href="/register">Register</Link>
+        <LogoutButton />
       </div>
     </div>
   );

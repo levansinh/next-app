@@ -1,11 +1,12 @@
 "use client";
 
-import {redirect, useRouter} from "next/navigation";
 import {FormProvider, useForm} from "react-hook-form";
 import {toast} from "react-toastify";
+import nookies from "nookies";
 
 import CButton from "@/components/button/button";
 import InputValidation from "@/components/input/input-validation";
+import {useMutateLogin} from "@/apis/auth.api";
 
 function FormLogin() {
   const form = useForm({
@@ -15,14 +16,25 @@ function FormLogin() {
     },
   });
 
-  const router = useRouter();
-
   const {handleSubmit} = form;
 
+  const {mutate, status} = useMutateLogin();
+
   const submitHandler = handleSubmit((values) => {
-    console.log(values);
-    toast.success("Login successfully");
-    router.push("/");
+    console.log(status);
+    mutate(values, {
+      onSuccess: (dataRef) => {
+        console.log(dataRef.authToken);
+        toast.success("Login successfully");
+
+        nookies.set(null, "sessionToken", dataRef.authToken, {
+          maxAge: 30 * 24 * 60 * 60, // 30 ngày
+          path: "/",
+          httpOnly: true,
+          sameSite: "strict",
+        });
+      },
+    });
   });
 
   return (
