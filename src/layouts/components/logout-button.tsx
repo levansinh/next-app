@@ -1,8 +1,7 @@
 "use client";
 
 import {authApiRequest} from "@/apis/auth.api";
-import {useRouter} from "next/router";
-import nookies from "nookies";
+import {useRouter} from "next/navigation";
 import {toast} from "react-toastify";
 
 function LogoutButton() {
