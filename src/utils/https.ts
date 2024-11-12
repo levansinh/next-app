@@ -15,9 +15,6 @@ class SessionClient {
     return this.token;
   }
   set value(token: string) {
-    if (typeof window === "undefined") {
-      throw new Error("No phải client");
-    }
     this.token = token;
   }
 }
@@ -45,10 +42,10 @@ const request = async <Response>(
         };
 
   if (isClient()) {
-    const sessionToken = "sinh";
+    const sessionTokens = sessionToken.value;
 
     if (sessionToken) {
-      baseHeaders.Authorization = `Token ${sessionToken}`;
+      baseHeaders.Authorization = `Token ${sessionTokens}`;
     }
   }
 

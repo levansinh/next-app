@@ -1,25 +1,24 @@
-import {IAuthen} from "@/types/auth";
 import {IGenericResponse} from "@/types/common";
 import http from "@/utils/https";
-import {QueryClient, useMutation} from "@tanstack/react-query";
 
 interface ILoginResponse extends IGenericResponse {
   data: {
-    nonFieldErrors: string[];
     authToken: string;
     email: string;
     userId: number;
   };
 }
 
-const login = async (payload: IAuthen) => {
-  const res = await http.post<ILoginResponse>("auth/login", payload);
-  return res.data;
-};
-
-export const useMutateLogin = () => {
-  const queryClient = new QueryClient();
-  return useMutation({
-    mutationFn: login,
-  });
+export const authApiRequest = {
+  login: (body: {username: string; password: string}) =>
+    http.post<ILoginResponse>("auth/login", body),
+  auth: (body: {sessionToken: string}) =>
+    http.post("api/auth", body, {
+      baseUrl: "",
+    }),
+  logoutClient: () =>
+    http.post("api/auth/logout", "", {
+      baseUrl: "",
+    }),
+  logoutServer: () => http.delete("auth/logout"),
 };

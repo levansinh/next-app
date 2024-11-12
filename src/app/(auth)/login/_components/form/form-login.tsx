@@ -2,13 +2,17 @@
 
 import {FormProvider, useForm} from "react-hook-form";
 import {toast} from "react-toastify";
-import nookies from "nookies";
 
 import CButton from "@/components/button/button";
 import InputValidation from "@/components/input/input-validation";
-import {useMutateLogin} from "@/apis/auth.api";
+import {authApiRequest} from "@/apis/auth.api";
+import {sessionToken} from "@/utils/https";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {Spinner} from "@nextui-org/react";
 
 function FormLogin() {
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm({
     defaultValues: {
       username: "",
@@ -18,30 +22,41 @@ function FormLogin() {
 
   const {handleSubmit} = form;
 
-  const {mutate, status} = useMutateLogin();
+  const router = useRouter();
 
-  const submitHandler = handleSubmit((values) => {
-    console.log(status);
-    mutate(values, {
-      onSuccess: (dataRef) => {
-        console.log(dataRef.authToken);
-        toast.success("Login successfully");
+  async function onSubmit(values: {username: string; password: string}) {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const result = await authApiRequest.login(values);
+      sessionToken.value = result.data.authToken;
+      console.log(1);
+      await authApiRequest.auth({
+        sessionToken: result.data.authToken,
+      });
+      toast.success("thanh cong");
+      router.push("/");
+      router.refresh();
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
-        nookies.set(null, "sessionToken", dataRef.authToken, {
-          maxAge: 30 * 24 * 60 * 60, // 30 ngày
-          path: "/",
-          httpOnly: true,
-          sameSite: "strict",
-        });
-      },
-    });
-  });
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex items-center justify-center mt-4">
       <div className="flex items-center w-[500px] bg-black p-5 rounded-lg">
         <FormProvider {...form}>
-          <form className="w-full" onSubmit={submitHandler}>
+          <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-center text-white pb-5">Login</h1>
             <div className="flex flex-col gap-3">
               <InputValidation name="username" id="username" placeholder="emsinh" />
