@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prettier --check . && next build",
     "start": "next start",
-    "lint": "bun lint:es && bun lint:style",
+    "lint": "next lint",
     "format": "prettier --write .",
     "lint:style": "stylelint 'src/**/styled.ts' 'src/**/*.tsx'",
     "prepare": "husky",
@@ -14,13 +14,18 @@
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "lint-staged": {
-    "./**/*.{js,jsx,ts,tsx,css,d.ts}": [
-      "bun lint"
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.tsx": [
+      "eslint --fix",
+      "prettier --write"
     ]
   },
   "husky": {
     "hooks": {
-      "pre-commit": "bun precommit"
+      "pre-commit": "lint-staged"
     }
   },
   "dependencies": {

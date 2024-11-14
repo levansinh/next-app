@@ -5,7 +5,8 @@ module.exports = {
   useTabs: false,
   singleQuote: false,
   bracketSpacing: false,
-  endOfLine: 'auto',
-  arrowParens: 'always',
-  trailingComma: 'all',
+  endOfLine: "auto",
+  arrowParens: "always",
+  trailingComma: "all",
+  plugins: ["prettier-plugin-tailwindcss"],
 };
