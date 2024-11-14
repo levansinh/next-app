@@ -1,7 +1,7 @@
 import {type NextRequest} from "next/server";
 import {NextResponse} from "next/server";
 
-const privatePaths = ["/me"];
+const privatePaths = ["/me", "/snake"];
 const authPaths = ["/login", "/register"];
 
 export function middleware(request: NextRequest) {
@@ -21,3 +21,7 @@ export function middleware(request: NextRequest) {
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/me", "/snake"],
+};

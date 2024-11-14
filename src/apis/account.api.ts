@@ -18,3 +18,7 @@ export const useFetchUser = () => {
     queryFn: fetchUser,
   });
 };
+
+export const authApiRequest = {
+  me: () => http.get<IUser>("auth/user-profile"),
+};

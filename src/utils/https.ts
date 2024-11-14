@@ -21,6 +21,8 @@ class SessionClient {
 
 export const sessionToken = new SessionClient();
 
+console.log(sessionToken.value, "sessionToken");
+
 const request = async <Response>(
   method: "GET" | "POST" | "PUT" | "DELETE",
   url: string,
@@ -43,10 +45,7 @@ const request = async <Response>(
 
   if (isClient()) {
     const sessionTokens = sessionToken.value;
-
-    if (sessionToken) {
-      baseHeaders.Authorization = `Token ${sessionTokens}`;
-    }
+    baseHeaders.Authorization = sessionTokens ? `Token ${sessionTokens}` : "";
   }
 
   const baseUrl =

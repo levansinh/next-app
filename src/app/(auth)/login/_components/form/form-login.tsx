@@ -29,14 +29,16 @@ function FormLogin() {
     setIsLoading(true);
     try {
       const result = await authApiRequest.login(values);
-      sessionToken.value = result.data.authToken;
-      console.log(1);
       await authApiRequest.auth({
         sessionToken: result.data.authToken,
       });
-      toast.success("thanh cong");
-      router.push("/");
-      router.refresh();
+      if (result.isFlag) {
+        console.log(result.data.authToken, "result");
+        toast.success("thanh cong");
+        sessionToken.value = result.data.authToken;
+        router.push("/");
+        router.refresh();
+      }
     } catch (error: any) {
       console.log(error);
     } finally {
